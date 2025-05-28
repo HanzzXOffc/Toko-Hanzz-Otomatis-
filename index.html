@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Toko AlwaysHanzz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      background-image: url('https://files.catbox.moe/0cy825.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 5px rgba(0,0,0,0.7);
+    }
+    .product {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.85);
+    }
+    .product-name {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .price {
+      color: green;
+      margin-top: 5px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      color: #222;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #218838;
+    }
+    #rekeningInfo {
+      margin-top: 10px;
+      font-weight: 600;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Toko Always Hanzz</h1>
+
+<div id="products"></div>
+
+<h2>Checkout</h2>
+<form id="checkoutForm">
+  <label for="productSelect">Pilih Produk</label>
+  <select id="productSelect" required></select>
+
+  <label for="buyerName">Nama Pembeli</label>
+  <input type="text" id="buyerName" required />
+
+  <label for="emailBuyer">Email</label>
+  <input type="email" id="emailBuyer" required />
+
+  <label for="paymentMethod">Metode Pembayaran</label>
+  <select id="paymentMethod" required>
+    <option value="">Pilih metode pembayaran</option>
+    <option value="Dana">Dana</option>
+    <option value="QRIS">QRIS</option>
+    <option value="Chat Owner">Produk? Chat Owner</option>
+  </select>
+
+  <p id="rekeningInfo">Silakan pilih metode pembayaran.</p>
+
+  <label for="transferProof">Upload Bukti Transfer</label>
+  <input type="file" id="transferProof" accept=".jpg,.png,.pdf" required />
+
+  <button type="submit">Kirim Order</button>
+</form>
+
+<script>
+  const telegramToken = '7118877803:AAG-W0zm7jdiz7xPzIBnzRMqJ7DjPeJhTRg'; // Ganti dengan token bot kamu
+  const telegramChatId = '7504137934';  // Ganti dengan chat ID kamu
+
+  const products = [
+    { name: "Reseller Panel", price: "5.000" },
+    { name: "Admin Panel", price: "10.000" },
+    { name: "Jasa Pembuatan Website Toko Online", price: "15.000" },
+    { name: "Jasa Rename Script Bot WhatsApp No Enc", price: "10.000" },
+    { name: "Jasa Pembuatan Website Top Up", price: "35.000" },
+    { name: "Jasa Penambahan Fitur Bot", price : "13.000" },
+    { name: "Script Bot Pushkontak", price: "15.000" },
+    { name: "Reseller Script Simpel Bot V4", price: "25.000" },
+    { name: "Reseller Script Simpel Bot V7", price: "35.000" },
+    { name: "Murnok", price: "4.000" },
+    { name: "Reseller Script Store", price: "30.000" },
+    { name: "Script Bot Simpel Menu V4", price: "25.000" },
+    { name: "Script Bot Simpel Menu V7", price: "35.000" },
+    { name: "Jasa Rename Script Enc", price: "20.000" },
+    { name: "Produk lainnya? Chat Owner", price: "-" }
+  ];
+
+  const productSelect = document.getElementById('productSelect');
+  const productsDiv = document.getElementById('products');
+  const checkoutForm = document.getElementById('checkoutForm');
+  const transferProof = document.getElementById('transferProof');
+
+  function renderProducts() {
+    productsDiv.innerHTML = '';
+    products.forEach(p => {
+      productsDiv.innerHTML += `<div class="product">
+        <div class="product-name">${p.name}</div>
+        <div class="price">Harga: Rp ${p.price}</div>
+      </div>`;
+    });
+  }
+
+  function fillProductSelect() {
+    productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+    products.forEach((p, i) => {
+      productSelect.innerHTML += `<option value="${i}">${p.name} - Rp ${p.price}</option>`;
+    });
+  }
+
+  document.getElementById("paymentMethod").addEventListener("change", function() {
+    const metode = this.value;
+    const rekeningInfo = document.getElementById("rekeningInfo");
+    if (metode === "QRIS" || metode === "Chat Owner") {
+      rekeningInfo.innerHTML = `Klik <a href="https://wa.me/6281936513894?text=Halo, saya ingin melakukan pembayaran melalui ${metode}" target="_blank" style="color:#007bff;">di sini</a> untuk hubungi admin.`;
+    } else {
+      rekeningInfo.innerText = "083822176542 a.n. JOPI";
+    }
+  });
+
+  checkoutForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const productIndex = productSelect.value;
+    const buyerName = document.getElementById('buyerName').value.trim();
+    const email = document.getElementById('emailBuyer').value.trim();
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const file = transferProof.files[0];
+
+    if (productIndex === '' || !buyerName || !email || !paymentMethod || !file) {
+      alert('Lengkapi semua data!');
+      return;
+    }
+
+    const product = products[productIndex];
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const orderDate = new Date();
+      const time = orderDate.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+
+      const message = `
+📦Pesanan Sukses
+
+👤 Nama: ${buyerName}
+✉️ Email: ${email}
+🛒 Produk: ${product.name}
+💰 Harga: Rp ${product.price}
+💳 Metode: ${paymentMethod}
+🕒 Waktu: ${time}
+
+© Always Hanzz`;
+
+      // Kirim notifikasi Telegram tanpa gambar
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: telegramChatId,
+          text: message,
+          reply_markup: {
+            inline_keyboard: [[
+              { text: "✅ Transaksi Telah Di Selesaikan", callback_data: "transaksi_selesai" }
+            ]]
+          }
+        })
+      });
+
+      alert('Order berhasil dikirim!');
+      checkoutForm.reset();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  renderProducts();
+  fillProductSelect();
+</script>
+
+</body>
+</html>
