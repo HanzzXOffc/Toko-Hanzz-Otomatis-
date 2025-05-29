@@ -51,23 +51,15 @@
       border: 1px solid #ccc;
     }
     button {
-      margin-top: 10px;
       padding: 10px;
       font-size: 16px;
-      background: #28a745;
-      color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
     button:hover {
-      background: #218838;
-    }
-    #rekeningInfo {
-      margin-top: 10px;
-      font-weight: 600;
-      color: #111;
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -85,28 +77,22 @@
   <label for="buyerName">Nama Pembeli</label>
   <input type="text" id="buyerName" required />
 
-  <label for="emailBuyer">Email</label>
-  <input type="email" id="emailBuyer" required />
-
-  <label for="paymentMethod">Metode Pembayaran</label>
-  <select id="paymentMethod" required>
-    <option value="">Pilih metode pembayaran</option>
-    <option value="Dana">Dana</option>
-    <option value="QRIS">QRIS</option>
-    <option value="Chat Owner">Produk? Chat Owner</option>
-  </select>
-
-  <p id="rekeningInfo">Silakan pilih metode pembayaran.</p>
-
   <label for="transferProof">Upload Bukti Transfer</label>
   <input type="file" id="transferProof" accept=".jpg,.png,.pdf" required />
 
-  <button type="submit">Kirim Order</button>
+  <div style="margin-top:15px; display:flex; flex-direction: column; gap:10px;">
+    <button onclick="copyText('083822176542')" type="button" style="background:#007bff;color:white;">Salin Nomor Dana</button>
+    <button onclick="window.open('https://wa.me/6281936513894?text=Halo, saya ingin scan QRIS', '_blank')" type="button" style="background:#ffc107;color:black;">Minta QR ke Owner</button>
+    <button onclick="window.open('https://whatsapp.com/channel/0029Vb5ahlD2v1ImfMMaMr00', '_blank')" type="button" style="background:#25D366;color:white;">Gabung Channel WA</button>
+    <button onclick="window.open('https://wa.me/6281936513894?text=Halo, saya ingin tanya produk lainnya', '_blank')" type="button" style="background:#6f42c1;color:white;">Produk Lainnya? Chat Owner</button>
+  </div>
+
+  <button type="submit" style="background:#28a745;color:white; margin-top:15px;">Kirim Order</button>
 </form>
 
 <script>
-  const telegramToken = '7118877803:AAG-W0zm7jdiz7xPzIBnzRMqJ7DjPeJhTRg'; // Ganti dengan token bot kamu
-  const telegramChatId = '7504137934';  // Ganti dengan chat ID kamu
+  const telegramToken = '7118877803:AAG-W0zm7jdiz7xPzIBnzRMqJ7DjPeJhTRg'; // Ganti token bot kamu
+  const telegramChatId = '7504137934'; // Ganti chat ID kamu
 
   const products = [
     { name: "Reseller Panel", price: "5.000" },
@@ -154,26 +140,14 @@
     });
   }
 
-  document.getElementById("paymentMethod").addEventListener("change", function() {
-    const metode = this.value;
-    const rekeningInfo = document.getElementById("rekeningInfo");
-    if (metode === "QRIS" || metode === "Chat Owner") {
-      rekeningInfo.innerHTML = `Klik <a href="https://wa.me/6281936513894?text=Halo, saya ingin melakukan pembayaran melalui ${metode}" target="_blank" style="color:#007bff;">di sini</a> untuk hubungi admin.`;
-    } else {
-      rekeningInfo.innerText = "083822176542 a.n. JOPI";
-    }
-  });
-
   checkoutForm.addEventListener('submit', e => {
     e.preventDefault();
 
     const productIndex = productSelect.value;
     const buyerName = document.getElementById('buyerName').value.trim();
-    const email = document.getElementById('emailBuyer').value.trim();
-    const paymentMethod = document.getElementById('paymentMethod').value;
     const file = transferProof.files[0];
 
-    if (productIndex === '' || !buyerName || !email || !paymentMethod || !file) {
+    if (productIndex === '' || !buyerName || !file) {
       alert('Lengkapi semua data!');
       return;
     }
@@ -188,15 +162,12 @@
 📦Pesanan Sukses
 
 👤 Nama: ${buyerName}
-✉️ Email: ${email}
 🛒 Produk: ${product.name}
 💰 Harga: Rp ${product.price}
-💳 Metode: ${paymentMethod}
 🕒 Waktu: ${time}
 
 © Always Hanzz`;
 
-      // Kirim notifikasi Telegram tanpa gambar
       fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
         method: 'POST',
         headers: {
@@ -219,9 +190,15 @@
     reader.readAsDataURL(file);
   });
 
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Nomor Dana disalin: " + text);
+    });
+  }
+
   renderProducts();
   fillProductSelect();
 </script>
 
 </body>
-</html>
+  </html>
